@@ -704,11 +704,15 @@ class Node {
 		support = s;
 	}
 	void a_inc_support() {
+#ifdef _OPENMP
 #pragma omp atomic
+#endif
 		support += 1;
 	}
 	void a_dec_support() {
+#ifdef _OPENMP
 #pragma omp atomic
+#endif
 		support -= 1;
 	}
 	double get_support_normalization() {
@@ -718,11 +722,15 @@ class Node {
 		support_normalization = s;
 	}
 	void a_inc_support_normalization() {
+#ifdef _OPENMP
 #pragma omp atomic
+#endif
 		support_normalization += 1;
 	}
 	void a_dec_support_normalization() {
+#ifdef _OPENMP
 #pragma omp atomic
+#endif
 		support_normalization -= 1;
 	}
 
@@ -888,8 +896,6 @@ class Node {
 					// otherwise we don't
 					// copy other parameters and join the twin
 					//to this if the child is a label
-					Node *new_lc = child->lchild();
-					Node *new_rc = child->rchild();
 					if (child->is_leaf()) {
 						if (child->get_twin() != NULL) {
 							set_twin(child->get_twin());
@@ -1609,7 +1615,7 @@ class Node {
         vector<int> find_leaf_preorders() {
 	  vector<Node*> leaves = find_leaves();
 	  vector<int> preorders = vector<int>();
-	  for (int i = 0; i < leaves.size(); i++) {
+	  for (size_t i = 0; i < leaves.size(); i++) {
 	    preorders.push_back(leaves[i]->get_preorder_number());
 	  }
 	  
@@ -1715,7 +1721,7 @@ class Node {
 	    if (descendants[(*i)->get_preorder_number()] == 1) {
 	      Node* placed_node;
 	      int depth = (*i)->get_deepest_siblings_hlpr(descendants, &placed_node);
-	      while (siblings_by_depth.size() - 1 < depth)
+	      while ((int)siblings_by_depth.size() - 1 < depth)
 		{
 		  siblings_by_depth.resize(siblings_by_depth.size() * 2);
 		}
@@ -1752,7 +1758,7 @@ class Node {
 	  NOTE: this can be a function
         */
         Node *find_arbitrary_lca(vector<Node *> components, vector<int> &descendants) {	        
-		for (int i = 0; i < components.size(); i++) {
+		for (size_t i = 0; i < components.size(); i++) {
 		  Node* root = components[i];
 		  if (root->get_preorder_number() == -1) {continue;}
 		  if (descendants[root->get_preorder_number()] > 1) {
@@ -1934,7 +1940,6 @@ class Node {
 		if (name != "") {
 			string converted_name = "";
 			string current_num = "";
-			string::iterator i = name.begin();
 			size_t old_loc = 0;
 			size_t loc = 0;
 			while ((loc = name.find_first_of("0123456789", old_loc)) != string::npos) {
@@ -1986,7 +1991,7 @@ class Node {
 	void count_numbered_labels(vector<int> *label_counts) {
 		if (name != "") {
 			int label = stomini(name);
-			if (label_counts->size() <= label)
+			if ((int)label_counts->size() <= label)
 				label_counts->resize(label+1,0);
 			(*label_counts)[label]++;
 		}
@@ -2569,7 +2574,7 @@ void find_descendant_counts_hlpr(vector<int> *dc) {
 		num_descendants += (*dc)[(*c)->get_preorder_number()];
 		num_descendants += 1;
 	}
-	if (dc->size() <= get_preorder_number())
+	if ((int)dc->size() <= get_preorder_number())
 		dc->resize(get_preorder_number() + 1, -1);
 	(*dc)[get_preorder_number()] = num_descendants;
 }
@@ -2589,7 +2594,7 @@ void find_leaf_counts_hlpr(vector<int> *lc) {
 	}
 	if (is_leaf())
 		num_leaves++;
-	if (lc->size() <= get_preorder_number())
+	if ((int)lc->size() <= get_preorder_number())
 		lc->resize(get_preorder_number() + 1, -1);
 	(*lc)[get_preorder_number()] = num_leaves;
 }
@@ -2720,7 +2725,7 @@ Node *build_tree(string s, set<string, StringCompare> *include_only);
 Node *build_tree(string s, int start_depth);
 Node *build_tree(string s, int start_depth, set<string, StringCompare> *include_only);
 
-int build_tree_helper(int start, const string& s, Node *parent,
+string::size_type build_tree_helper(string::size_type start, const string& s, Node *parent,
 		bool &valid, set<string, StringCompare> *include_only);
 //void preorder_number(Node *node);
 //int preorder_number(Node *node, int next);
@@ -2758,12 +2763,12 @@ Node *build_tree(string s, int start_depth, set<string, StringCompare> *include_
 }
 
 // build_tree recursive helper function
-int build_tree_helper(int start, const string& s, Node *parent,
+string::size_type build_tree_helper(string::size_type start, const string& s, Node *parent,
 		bool &valid, set<string, StringCompare> *include_only) {
-	int loc = s.find_first_of("(,)", start);
+	string::size_type loc = s.find_first_of("(,)", start);
 	if (loc == string::npos) {
 		string name = s.substr(start, s.size() - start);
-		int name_end = name.find(':');
+		string::size_type name_end = name.find(':');
 		if (name_end != string::npos)
 			name = name.substr(0, name_end);
 		if (include_only == NULL ||
@@ -2776,11 +2781,11 @@ int build_tree_helper(int start, const string& s, Node *parent,
 	}
 	while(s[start] == ' ' || s[start] == '\t')
 		start++;
-	int end = loc;
+	string::size_type end = loc;
 	while(s[end] == ' ' || s[end] == '\t')
 		end--;
 	string name = s.substr(start, end - start);
-	int name_end = name.find(':');
+	string::size_type name_end = name.find(':');
 	if (name_end != string::npos)
 		name = name.substr(0, name_end);
 	Node *node = NULL;
@@ -2811,7 +2816,7 @@ int build_tree_helper(int start, const string& s, Node *parent,
 			if (s[loc-1] == ')') {
 				int numc = node->get_children().size();
 				bool contracted = false;
-				int next = s.find_first_of(",)", loc);
+				string::size_type next = s.find_first_of(",)", loc);
 				if (next != string::npos) {
 					if (next > loc && (REQUIRED_SUPPORT > 0 || MIN_LENGTH >= 0)) {
 						string info = s.substr(loc, next - loc);
@@ -2830,7 +2835,7 @@ int build_tree_helper(int start, const string& s, Node *parent,
 							}
 						}
 						// branch lengths (a number after a colon)
-						int next_colon = info.find_first_of(":");
+						string::size_type next_colon = info.find_first_of(":");
 						if (next_colon != string::npos) {
 							string length_str = info.substr(next_colon+1);
 							double length = atof(length_str.c_str());
@@ -2846,7 +2851,7 @@ int build_tree_helper(int start, const string& s, Node *parent,
 							}
 						}
 						// support values (a number in square brackets)
-						int square_bracket = info.find_first_of("[");
+						string::size_type square_bracket = info.find_first_of("[");
 						if (square_bracket != string::npos) {
 							string support_str = info.substr(square_bracket+1);
 							double support = atof(support_str.c_str()) / 100.0;
@@ -2907,10 +2912,9 @@ int preorder_number(Node *node, int next) {
 int stomini(string s) {
 //	cout << "stomini" << endl;
 	string number_characters = "+-0123456789";
-	int i = 0;
 	int min = INT_MAX;
 	string current = "";
-	for(int i = 0; i < s.size(); i++) {
+	for(size_t i = 0; i < s.size(); i++) {
 		if (number_characters.find(s[i]) != string::npos) {
 			current += s[i];
 		}
@@ -2936,12 +2940,11 @@ string root(string s) {
 //	cout << "root(string s)" << endl;
 //	cout << s << endl;
 	string r = "";
-	int i = 0;
 	int depth = 0;
 	int first_c = -1;
 	int second_c = -1;
 	int last_bracket = -1;
-	for(int i = 0; i < s.size(); i++) {
+	for(int i = 0; i < (int)s.size(); i++) {
 		if (s[i] == '(')
 			depth++;
 		else if (s[i] == ')') {
@@ -3024,7 +3027,7 @@ vector<Node *> contract_deepest_siblings(vector<vector<Node *>> &siblings_by_dep
 	  vector<Node*> deepest_siblings = vector<Node*>();
 	  for (int j = siblings_by_depth.size() - 1; j >= 0; j--) {
 	    if (siblings_by_depth[j].size() != 0) {
-	      for (int k = 0; k < siblings_by_depth[j].size(); k++) {
+	      for (size_t k = 0; k < siblings_by_depth[j].size(); k++) {
 		deepest_siblings.push_back(siblings_by_depth[j][k]);
 	      }
 	    }
@@ -3035,7 +3038,7 @@ vector<Node *> contract_deepest_siblings(vector<vector<Node *>> &siblings_by_dep
 	  vector<Node*> deepest_siblings = vector<Node*>();
 	  for (int j = siblings_by_depth.size() - 1; j >= 0; j--) {
 	    if (siblings_by_depth[j].size() != 0) {
-	      for (int k = 0; k < siblings_by_depth[j].size(); k++) {
+	      for (size_t k = 0; k < siblings_by_depth[j].size(); k++) {
 		deepest_siblings.push_back(siblings_by_depth[j][k]);
 		s_map->insert({siblings_by_depth[j][k], j - 1});
 	      }

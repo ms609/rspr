@@ -488,7 +488,7 @@ int rSPR_worse_3_mult_approx_hlpr(Forest *T1, Forest *T2, list<Node *> *singleto
 	//Get depth of siblings from root of each component
 	if (arbitrary_lca == NULL) {	
 	  vector<vector<Node *>> siblings_by_depth = vector<vector<Node *>>(10);
-	  for (int i = 0; i != T2->components.size(); i++) {
+	  for (size_t i = 0; i != T2->components.size(); i++) {
 	    T2->components[i]->get_deepest_siblings(descendant_count, siblings_by_depth);
 	  }
 	  deepest_siblings = contract_deepest_siblings(siblings_by_depth);
@@ -1018,12 +1018,12 @@ void mult_cut_all_except_and_cleanup(Node* T2_a1, Forest *T2, list<Node*> *singl
 #define MULT_BB_CUT_AND_RESOLVE(nodes_to_cut, nodes_to_exclude_cutting, node_to_protect) { \
   bb_mult_recurse_data *next_data = generate_mult_recurse_data(T1, T2, sibling_groups, singletons);\
   int num_cuts = 0;							\
-  for (int i = 0; i < nodes_to_cut.size(); i++) {			\
+  for (size_t i = 0; i < nodes_to_cut.size(); i++) {			\
     Node* T2_ax_next = next_data->node_map[nodes_to_cut[i]];		\
     mult_cut_and_cleanup(T2_ax_next, next_data->T2, next_data->singletons);\
     num_cuts++;								\
   }									\
-  for (int i = 0; i < nodes_to_exclude_cutting.size(); i++) {		\
+  for (size_t i = 0; i < nodes_to_exclude_cutting.size(); i++) {		\
     Node* T2_ax_next = next_data->node_map[nodes_to_exclude_cutting[i]]; \
     mult_cut_all_except_and_cleanup(T2_ax_next, next_data->T2, next_data->singletons); \
     num_cuts++;								\
@@ -1140,7 +1140,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
       Node *T1_sibling_group = sibling_groups->back();
       list<list<Node*>> identical_sibling_groups;
       T1_sibling_group->find_identical_sibling_groups(&identical_sibling_groups);
-      bool found_identical = false;
+      [[maybe_unused]] bool found_identical = false;
       for (; i != sibling_groups->rend(); i++ ){
 	(*i)->find_identical_sibling_groups(&identical_sibling_groups);
 	if (identical_sibling_groups.size() > 0) {
@@ -1271,7 +1271,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 	//If the lca is null, all siblings are in different components, ie no path between them
 	if (arbitrary_lca == NULL) {	
 	  siblings_by_depth = vector<vector<Node *>>(10);
-	  for (int i = 0; i != T2->components.size(); i++) {
+	  for (size_t i = 0; i != T2->components.size(); i++) {
 	    //if preorder is -1 then this is rho
 	    if (T2->components[i]->get_preorder_number() == -1) { continue; }
 	    T2->components[i]->get_deepest_siblings(descendant_count, siblings_by_depth);
@@ -1523,7 +1523,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 	//step 8
 	else {
 	  bool all_but_ar_s1 = true;
-	  for (int i = 0; i < deepest_siblings.size() - 1; i++) {
+	  for (size_t i = 0; i < deepest_siblings.size() - 1; i++) {
 	    if (s_map[deepest_siblings[i]] != 1) {
 	      all_but_ar_s1 = false;
 	      break;
@@ -1604,7 +1604,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 
 	      vector<Node*> to_cut = {};
 	      vector<Node*> to_cut_except = {};
-	      for (int i = 0; i < deepest_siblings.size() - 1; i++) {
+	      for (size_t i = 0; i < deepest_siblings.size() - 1; i++) {
 		to_cut_except.push_back(deepest_siblings[i]);
 	      }
 	      MULT_BB_CUT_AND_RESOLVE(to_cut, to_cut_except, NULL);
@@ -1615,14 +1615,14 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 
 
 	    if (deepest_siblings.size() > 2){
-	      for (int i = 0; i < deepest_siblings.size() - 1; i++) {
+	      for (size_t i = 0; i < deepest_siblings.size() - 1; i++) {
 #ifdef DEBUG
 	      cout << "Case 8.2b for all ai cut all other B" << endl;
 #endif
 
 		vector<Node*> to_cut = {};
 		vector<Node*> to_cut_except = {};
-		for (int j = 0; j < deepest_siblings.size() - 1; j++) {
+		for (size_t j = 0; j < deepest_siblings.size() - 1; j++) {
 		  if (i != j) {
 		    to_cut_except.push_back(deepest_siblings[j]);
 		  }
@@ -1848,7 +1848,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 #endif	    
 	      vector<Node*> to_cut = {};
 	      vector<Node*> to_cut_except = {};
-	      for (int i = 0; i < deepest_siblings.size(); i++) {
+	      for (size_t i = 0; i < deepest_siblings.size(); i++) {
 		to_cut.push_back(deepest_siblings[i]);
 	      }
 	      MULT_BB_CUT_AND_RESOLVE(to_cut, to_cut_except, NULL);
@@ -1860,20 +1860,20 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 #endif
 	      vector<Node*> to_cut = {};
 	      vector<Node*> to_cut_except = {};
-	      for (int i = 0; i < deepest_siblings.size(); i++) {
+	      for (size_t i = 0; i < deepest_siblings.size(); i++) {
 		to_cut_except.push_back(deepest_siblings[i]);
 	      }
 	      MULT_BB_CUT_AND_RESOLVE(to_cut, to_cut_except, NULL);
 	    }
 	    //8.5 for each ai cut all a's except ai
 	    {	      
-	      for (int i = 0; i < deepest_siblings.size(); i++) {
+	      for (size_t i = 0; i < deepest_siblings.size(); i++) {
 #ifdef DEBUG
 		cout << "Case 8.5c cut all a1-ar except ai" << endl;
 #endif
 		vector<Node*> to_cut = {};
 		vector<Node*> to_cut_except = {};
-		for (int j = 0; j < deepest_siblings.size(); j++) {
+		for (size_t j = 0; j < deepest_siblings.size(); j++) {
 		  if (i != j) {
 		    to_cut.push_back(deepest_siblings[j]);
 		  }
@@ -1883,13 +1883,13 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
 	    }
 	    //8.5 for each ai cut all b's except ai's
 	    {	      
-	      for (int i = 0; i < deepest_siblings.size(); i++) {
+	      for (size_t i = 0; i < deepest_siblings.size(); i++) {
 #ifdef DEBUG
 		cout << "Case 8.5d cut all B1-Br except Bi" << endl;
 #endif
 		vector<Node*> to_cut = {};
 		vector<Node*> to_cut_except = {};
-		for (int j = 0; j < deepest_siblings.size(); j++) {
+		for (size_t j = 0; j < deepest_siblings.size(); j++) {
 		  if (i != j) {
 		    to_cut_except.push_back(deepest_siblings[j]);
 		  }
@@ -2475,8 +2475,9 @@ if (!sync_twins(T1, T2))
 }
 
 int rSPR_worse_3_approx_distance_only(Forest *T1, Forest *T2) {
-if (!sync_twins(T1, T2))
+if (!sync_twins(T1, T2)) {
 	return 0;
+}
 	list<Node *> *sibling_pairs = T1->find_sibling_pairs();
 	list<Node *> singletons = T2->find_singletons();
 	list<pair<Forest,Forest> > AFs = list<pair<Forest,Forest> >();
@@ -3709,8 +3710,6 @@ cout << "  ";
 			set<SiblingPair>::iterator deepest_valid = sibling_pairs->end();
 			int deepest_depth = INT_MAX;
 			int deepest_depth_2 = INT_MAX;
-			Node *best_a = NULL;
-			Node *best_c = NULL;
 			/* pop protected_stack when out of order sibling pairs
 			 have already contracted it */
 			if(!protected_stack->empty()
@@ -3932,8 +3931,8 @@ cout << "  ";
 						return k-1;
 					}
 				}
-				Forest *best_T1;
-				Forest *best_T2;
+				[[maybe_unused]] Forest *best_T1;
+				[[maybe_unused]] Forest *best_T2;
 				int best_k = -1;
 				int answer_a = -1;
 				int answer_b = -1;
@@ -3975,9 +3974,10 @@ cout << "  ";
 
 			if (CUT_ONE_B) {
 				if (T2_a->parent()->parent() == T2_c->parent()
-					&& T2_c->parent() != NULL && !cut_b_only)
+					&& T2_c->parent() != NULL && !cut_b_only) {
 					cut_b_only=true;
-					cob = true;
+				}
+				cob = true;
 			}
 			else if (CUT_ONE_AB) {
 				if (T2_a->parent()->parent() == T2_c->parent()
@@ -4535,7 +4535,7 @@ cout << "  ";
 					vector<Node *> B_1 = T2_a->parent()->find_leaves();
 					LCA T1_LCA = LCA(T1->get_component(0));
 					Node *B_1_lca = NULL;
-					for(int i = 0; i < B_1.size(); i++) {
+					for(size_t i = 0; i < B_1.size(); i++) {
 						if (B_1[i] == T2_a) {
 							continue;
 						}
@@ -4968,7 +4968,6 @@ int rSPR_branch_and_bound_simple_clustering(Node *T1, Node *T2, bool verbose, ma
 					&& n->get_sibling() != NULL &&
 					n->get_sibling()->get_name() == "X")
 				continue;
-			Node *n_parent = n->parent();
 			Node *twin = n->get_twin();
 			Node *twin_parent = twin->parent();
 	
@@ -5027,8 +5026,6 @@ int rSPR_branch_and_bound_simple_clustering(Node *T1, Node *T2, bool verbose, ma
 		//comps.clear();
 		Forest f1a = Forest(f1);
 		Forest f2a = Forest(f2);
-		Forest *f1_cluster;
-		Forest *f2_cluster;
 
 		if (verbose) {
 			cout << "C" << i << "_1: ";
@@ -5058,7 +5055,7 @@ int rSPR_branch_and_bound_simple_clustering(Node *T1, Node *T2, bool verbose, ma
 		bool done_cluster = false;
 		bool done_split = false;
 
-		double tree_fraction = INITIAL_TREE_FRACTION;
+		[[maybe_unused]] double tree_fraction = INITIAL_TREE_FRACTION;
 
 		if (min_spr < min_k)
 			min_spr = min_k;
@@ -5499,7 +5496,6 @@ int rSPR_branch_and_bound_simple_clustering(Forest *T1, Forest *T2, bool verbose
 		else {
 		  total_k = rSPR_branch_and_bound_range(&F1, &F2, full_approx_spr, MAX_SPR);
 		}
-		int i = 1;
 		if (total_k < 0) {
 			if (CLAMP) {
 				total_k = MAX_SPR;
@@ -5663,7 +5659,6 @@ void reduction_leaf(Forest *T1, Forest *T2, UndoMachine *um) {
 bool chain_match(Node *T1_node, Node *T2_node, Node *T2_node_end) {
 	Node *T1_pendant;
 	Node *T2_pendant;
-	bool pendant_found = false;
 	if (T2_node->is_leaf())
 		return false;
 	// T1_node is a leaf
@@ -5719,7 +5714,9 @@ int rSPR_total_distance(Node *T1, vector<Node *> &gene_trees,
 	MAIN_CALL = false;
 	int end = gene_trees.size();
 //	T1->preorder_number();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)  // firstprivate(IN_SPLIT_APPROX)
+	#endif
 //	for(int j = 0; j < 10; j++)
 //	cout << "T1: " << T1->str_subtree() << endl;
 	for(int i = 0; i < end; i++) {
@@ -5784,7 +5781,9 @@ void rSPR_pairwise_distance(Node *T1, vector<Node *> &gene_trees, int start, int
 	MAIN_CALL = false;
 //	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		int k;
 		if (approx) {
@@ -5814,7 +5813,9 @@ void rSPR_pairwise_distance(Node *T1, vector<Node *> &gene_trees, int max_spr, i
 	MAIN_CALL = false;
 //	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		Forest F1 = Forest(T1);
 		Forest F2 = Forest(gene_trees[i]);
@@ -5845,13 +5846,15 @@ void rSPR_pairwise_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int s
 	MAIN_CALL = false;
 	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		int best_k = INT_MAX;
 		Node *T2_copy = new Node(*(gene_trees[i]));
 		vector<Node *> descendants = 
 				T2_copy->find_descendants();
-		for(int j = 0; j < descendants.size(); j++) {
+		for(size_t j = 0; j < descendants.size(); j++) {
 			T2_copy->reroot(descendants[j]);
 			T2_copy->set_depth(0);
 			T2_copy->fix_depths();
@@ -5891,13 +5894,15 @@ void rSPR_pairwise_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int m
 	MAIN_CALL = false;
 	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		int best_k = -1;
 		Node *T2_copy = new Node(*(gene_trees[i]));
 		vector<Node *> descendants = 
 				T2_copy->find_descendants();
-		for(int j = 0; j < descendants.size(); j++) {
+		for(size_t j = 0; j < descendants.size(); j++) {
 			T2_copy->reroot(descendants[j]);
 			T2_copy->set_depth(0);
 			T2_copy->fix_depths();
@@ -5929,7 +5934,9 @@ int rSPR_total_distance_precomputed(Node *T1, vector<Node *> &gene_trees,
 	MAIN_CALL = false;
 	int end = gene_trees.size();
 //	T1->preorder_number();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)  // firstprivate(IN_SPLIT_APPROX)
+	#endif
 	for(int i = 0; i < end; i++) {
 		// check that the SPR move affects the projection of T1
 		Forest F1 = Forest(T1);
@@ -5958,7 +5965,9 @@ int rSPR_total_distance_precomputed(Node *T1, vector<Node *> &gene_trees,
 int rf_total_distance(Node *T1, vector<Node *> &gene_trees) {
 	int total = 0;
 	int end = gene_trees.size();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)  // firstprivate(IN_SPLIT_APPROX)
+	#endif
 	for(int i = 0; i < end; i++) {
 			//		cout << i << endl;
 		int k = rf_distance(T1, gene_trees[i]);
@@ -5970,13 +5979,15 @@ int rf_total_distance(Node *T1, vector<Node *> &gene_trees) {
 int rf_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees) {
 	int total = 0;
 	int end = gene_trees.size();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)  // firstprivate(IN_SPLIT_APPROX)
+	#endif
 	for(int i = 0; i < end; i++) {
 		int best_k = INT_MAX;
 		Node T2_copy = Node(*(gene_trees[i]));
 		vector<Node *> descendants = 
 				T2_copy.find_descendants();
-		for(int j = 0; j < descendants.size(); j++) {
+		for(size_t j = 0; j < descendants.size(); j++) {
 			T2_copy.reroot(descendants[j]);
 			T2_copy.set_depth(0);
 			T2_copy.fix_depths();
@@ -6001,7 +6012,9 @@ void rf_pairwise_distance(Node *T1, vector<Node *> &gene_trees, int start, int e
 	MAIN_CALL = false;
 //	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		int k = rf_distance(T1, gene_trees[i]);
 		distances[i-start] = k;
@@ -6022,13 +6035,15 @@ void rf_pairwise_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int sta
 	MAIN_CALL = false;
 	T1->preorder_number();
 	vector<int> distances = vector<int>(end-start);
+	#ifdef _OPENMP
 	#pragma omp parallel for shared(distances) firstprivate(PREFER_RHO)
+	#endif
 	for(int i = start; i < end; i++) {
 		int best_k = INT_MAX;
 		Node T2_copy = Node(*(gene_trees[i]));
 		vector<Node *> descendants = 
 				T2_copy.find_descendants();
-		for(int j = 0; j < descendants.size(); j++) {
+		for(size_t j = 0; j < descendants.size(); j++) {
 			T2_copy.reroot(descendants[j]);
 			T2_copy.set_depth(0);
 			T2_copy.fix_depths();
@@ -6056,7 +6071,9 @@ int rSPR_total_distance(Node *T1, vector<Node *> &gene_trees, int threshold) {
 	MAIN_CALL = false;
 	int end = gene_trees.size();
 	T1->preorder_number();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)  // firstprivate(IN_SPLIT_APPROX)
+	#endif
 	for(int i = 0; i < end; i++) {
 		int k = rSPR_branch_and_bound_simple_clustering(T1, gene_trees[i], VERBOSE);
 //		k *= mylog2(gene_trees[i]->size());
@@ -6071,8 +6088,10 @@ int rSPR_total_distance(Node *T1, vector<Node *> &gene_trees, int threshold) {
 /*Joel's part*/
 int rSPR_total_distance(Forest *T1, vector<Node *> &gene_trees){
 	int total = 0;
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO)
-	for(int i = 0; i < gene_trees.size(); i++) {
+	#endif
+	for(size_t i = 0; i < gene_trees.size(); i++) {
 		Forest T2 = Forest(gene_trees[i]);
 		total += rSPR_branch_and_bound_simple_clustering(&T2, T1, VERBOSE);
 	}
@@ -6081,8 +6100,10 @@ int rSPR_total_distance(Forest *T1, vector<Node *> &gene_trees){
 
 int rSPR_total_approx_distance(Forest *T1, vector<Node *> &gene_trees) {
 	int total = 0;
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total)
-	for(int i = 0; i < gene_trees.size(); i++) {
+	#endif
+	for(size_t i = 0; i < gene_trees.size(); i++) {
 		Forest F1 = Forest(T1);
 		Forest F2 = Forest(gene_trees[i]);
 //		cout << i << endl;
@@ -6108,8 +6129,10 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 	int total = 0;
 	MAIN_CALL = false;
 	T1->preorder_number();
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total) firstprivate(PREFER_RHO) firstprivate(MAX_SPR) firstprivate(MIN_SPR)
-	for(int i = 0; i < gene_trees.size(); i++) {
+	#endif
+	for(size_t i = 0; i < gene_trees.size(); i++) {
 //		cout << "T1: " << T1->str_subtree() << endl;
 //		cout << "T2: " << gene_trees[i]->str_subtree() << endl;
 		Forest f1 = Forest(T1);
@@ -6126,7 +6149,7 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 		}
 		//f1.print_components();
 		//f2.print_components();
-		int size = f2.get_component(0)->size();
+		[[maybe_unused]] int size = f2.get_component(0)->size();
 		int best_distance = INT_MAX;
 		int old_max = MAX_SPR;
 		bool done = false;
@@ -6138,7 +6161,7 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 			vector<Node *> descendants = 
 				f2.get_component(0)->find_descendants();
 /*
-			for(int j = 0; j < descendants.size(); j++) {
+			for(size_t j = 0; j < descendants.size(); j++) {
 				f2.get_component(0)->reroot(descendants[j]);
 				f2.get_component(0)->set_depth(0);
 				f2.get_component(0)->fix_depths();
@@ -6164,7 +6187,7 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 ////					cout << endl;
 //				vector<Node *> descendants = 
 //				f2.get_component(0)->find_descendants();
-				for(int j = 0; j < descendants.size(); j++) {
+				for(size_t j = 0; j < descendants.size(); j++) {
 //					cout << "J=" << j << endl;
 //					cout << i << "," << k << "," << j << endl;
 //					cout << "rooting at: " << descendants[j]->str_subtree() << endl;
@@ -6205,7 +6228,7 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 			if (!done) {
 				vector<Node *> descendants = 
 					f2.get_component(0)->find_descendants();
-				for(int j = 0; j < descendants.size(); j++) {
+				for(size_t j = 0; j < descendants.size(); j++) {
 					f2.get_component(0)->reroot(descendants[j]);
 					f2.get_component(0)->set_depth(0);
 					f2.get_component(0)->fix_depths();
@@ -6238,13 +6261,13 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 //			if (descendants.size() > 70)
 //				NUM_ROOTINGS = descendants.size() / 10;
 //			NUM_ROOTINGS = sqrt(descendants.size());
-			if (NUM_ROOTINGS > 0 && descendants.size() < NUM_ROOTINGS + 1) {
+			if (NUM_ROOTINGS > 0 && descendants.size() < (size_t)(NUM_ROOTINGS + 1)) {
 				vector<Node *> rand_descendants =
 					random_select(descendants, NUM_ROOTINGS);
 				descendants = rand_descendants;
 				descendants.push_back(f2.get_component(0)->lchild());
 			}
-			for(int j = 0; j < descendants.size(); j++) {
+			for(size_t j = 0; j < descendants.size(); j++) {
 				f2.get_component(0)->reroot(descendants[j]);
 					f2.get_component(0)->set_depth(0);
 					f2.get_component(0)->fix_depths();
@@ -6288,8 +6311,10 @@ int rSPR_total_distance_unrooted(Node *T1, vector<Node *> &gene_trees, int thres
 int rSPR_total_approx_distance_unrooted(Node *T1, vector<Node *> &gene_trees) {
 	int total = 0;
 	MAIN_CALL = false;
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+: total)
-	for(int i = 0; i < gene_trees.size(); i++) {
+	#endif
+	for(size_t i = 0; i < gene_trees.size(); i++) {
 		Forest f1 = Forest(T1);
 		Forest f2 = Forest(gene_trees[i]);
 		if (!sync_twins(&f1, &f2))
@@ -6300,11 +6325,11 @@ int rSPR_total_approx_distance_unrooted(Node *T1, vector<Node *> &gene_trees) {
 			f2.get_component(0)->fix_depths();
 			f2.get_component(0)->preorder_number();
 		}
-		int size = f2.get_component(0)->size();
+		[[maybe_unused]] int size = f2.get_component(0)->size();
 		int best_distance = INT_MAX;
 		vector<Node *> descendants = 
 			f2.get_component(0)->find_descendants();
-		for(int j = 0; j < descendants.size(); j++) {
+		for(size_t j = 0; j < descendants.size(); j++) {
 			f2.get_component(0)->reroot(descendants[j]);
 					f2.get_component(0)->set_depth(0);
 					f2.get_component(0)->fix_depths();
@@ -6331,8 +6356,10 @@ int rSPR_total_approx_distance(Node *T1, vector<Node *> &gene_trees,
 		int threshold) {
 	int total = 0;
 	MAIN_CALL = false;
+	#ifdef _OPENMP
 	#pragma omp parallel for reduction(+ : total)
-	for(int i = 0; i < gene_trees.size(); i++) {
+	#endif
+	for(size_t i = 0; i < gene_trees.size(); i++) {
 		Forest F1 = Forest(T1);
 		Forest F2 = Forest(gene_trees[i]);
 //		cout << i << endl;
@@ -6407,8 +6434,8 @@ Node *find_best_root(Node *T1, Node *T2, double *best_root_b_acc) {
 	Node *t1 = F1.get_component(0);
 	Node *t2 = F2.get_component(0);
 	//F1->preorder_number();
-	int lchild_pre = t1->lchild()->get_preorder_number();
-	int rchild_pre = t1->rchild()->get_preorder_number();
+	[[maybe_unused]] int lchild_pre = t1->lchild()->get_preorder_number();
+	[[maybe_unused]] int rchild_pre = t1->rchild()->get_preorder_number();
 	if (!sync_twins(&F1, &F2)) {
 		return NULL;
 	}
@@ -6582,7 +6609,7 @@ Node *find_best_root_rspr(Node *T1, Node *T2) {
 	int new_prenum = T2->lchild()->get_preorder_number();
 	vector<Node *> roots = t2->find_descendants();
 	vector<int> root_prenums = vector<int>(roots.size());
-	for(int i = 0; i < roots.size(); i++) {
+	for(size_t i = 0; i < roots.size(); i++) {
 		root_prenums[i] = roots[i]->get_preorder_number();
 	}
 	int best_distance = INT_MAX;
@@ -6592,7 +6619,7 @@ Node *find_best_root_rspr(Node *T1, Node *T2) {
 //	cout << "T1: " << T1->str_subtree() << endl;
 //	cout << "T2: " << T2->str_subtree() << endl;
 //	cout << roots.size() << " Rootings" << endl;
-	for(int i = 0; i < roots.size(); i++) {
+	for(size_t i = 0; i < roots.size(); i++) {
 		Node *root = roots[i];
 		t2->reroot(root);
 //		cout << "\t" << t2->str_subtree() << endl;
@@ -6745,9 +6772,9 @@ void count_in_out(Node *n, vector<int> &num_in, vector<int> &num_out,
 		set<string, StringCompare> &outgroup) {
 	list<Node *>::iterator c;
 	int pre = n->get_preorder_number();
-	if (num_in.size() <= pre)
+	if ((int)num_in.size() <= pre)
 		num_in.resize(pre + 1, 0);
-	if (num_out.size() <= pre)
+	if ((int)num_out.size() <= pre)
 		num_out.resize(pre + 1, 0);
 	if (n->is_leaf()) {
 		if (outgroup.find(n->get_name()) != outgroup.end()) {
@@ -6808,9 +6835,10 @@ void modify_bipartition_support(Node *n, Forest *F1, Forest *F2,
 				if (n->parent() != NULL) {
 					stop_pre = n->parent()->get_preorder_number();
 				while ((t = t->parent()) != NULL
-						&& t->get_preorder_number() != stop_pre)
+						&& t->get_preorder_number() != stop_pre) {
 					t->a_inc_support();
-					t->a_inc_support_normalization();
+				}
+				t->a_inc_support_normalization();
 				}
 			}
 		}
@@ -6975,7 +7003,7 @@ void randomize_tree_with_spr(Forest* T1, Forest* T2, int count) {
     bool target_in_subtree = false;
     Node* first_leaf = target->find_leaves()[0];
     vector<Node*> source_leaves = source->find_leaves();
-    for (int i = 0; i < source_leaves.size(); i++) {
+    for (size_t i = 0; i < source_leaves.size(); i++) {
       if (source_leaves[i] == first_leaf) {
 	target_in_subtree = true;
 	break;
@@ -7018,7 +7046,7 @@ void randomize_tree_with_spr(Forest* T1, Forest* T2, int count) {
       }
       
       vector<Node*> source_leaves = source->find_leaves();
-      for (int i = 0; i < source_leaves.size(); i++) {
+      for (size_t i = 0; i < source_leaves.size(); i++) {
 	if (source_leaves[i] == first_leaf) {
 	  //cout << "target in subtree" << endl;
 	  target_in_subtree = true;

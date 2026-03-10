@@ -637,7 +637,6 @@ void ContractEvent(UndoMachine *um, Node *n, list<Undoable *>::iterator
 		Node *child;
 		Node *lc = n->lchild();
 		Node *rc = n->rchild();
-		Node *ret = NULL;
 		// contract out this node and give child to parent
 		if (parent != NULL) {
 			if (lc && !rc) {
@@ -696,8 +695,6 @@ void ContractEvent(UndoMachine *um, Node *n, list<Undoable *>::iterator
 					// copy other parameters and join the twin
 					//to this if the child is a label
 
-					Node *new_lc = child->lchild();
-					Node *new_rc = child->rchild();
 					if (child->is_leaf()) {
 						if (child->get_twin() != NULL) {
 							um->add_event(new SetTwin(n));

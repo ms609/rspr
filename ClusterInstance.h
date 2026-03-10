@@ -76,7 +76,7 @@ class ClusterInstance {
 		int rho_2 = -1;
 		int start = 0;
 		Forest *F1_cluster_node_forest = NULL;
-		Forest *F2_cluster_node_forest = NULL;
+		[[maybe_unused]] Forest *F2_cluster_node_forest = NULL;
 		#ifdef DEBUG_CLUSTERS
 			cout << "join_cluster" << endl;
 			cout << "original_F1: ";
@@ -371,7 +371,7 @@ list<ClusterInstance> cluster_reduction(Forest *old_F1, Forest *old_F2,
 		vector<Node *> cluster_F2_components = vector<Node *>();
 		if (!skip_F2_cluster)
 			cluster_F2_components.push_back(F2_root_node);
-		for(int i = 0; i < F2_cluster_copy_components.size(); i++) {
+		for(size_t i = 0; i < F2_cluster_copy_components.size(); i++) {
 			if (F2_cluster_copy_components[i] == true)
 				cluster_F2_components.push_back(old_F2->get_component(i));
 		}
@@ -389,7 +389,7 @@ list<ClusterInstance> cluster_reduction(Forest *old_F1, Forest *old_F2,
 		F1->set_twin(F2);
 		F2->set_twin(F1);
 
-		for(int i = 0; i < F2_cluster_copy_components.size(); i++) {
+		for(size_t i = 0; i < F2_cluster_copy_components.size(); i++) {
 			if (F2_cluster_copy_components[i] == true) {
 				cluster_F2_components.push_back(
 						(old_F2->get_component(i)));
@@ -403,7 +403,7 @@ list<ClusterInstance> cluster_reduction(Forest *old_F1, Forest *old_F2,
 	// remove any clustered components from old_F2
 	vector<Node *> old_F2_remaining_components = vector<Node *>();
 //	cout << "size=" << old_F2->num_components() << endl;
-	for(int i = 0; i < old_F2_keep_components.size(); i++) {
+	for(size_t i = 0; i < old_F2_keep_components.size(); i++) {
 		if (old_F2_keep_components[i] == true) {
 			old_F2_remaining_components.push_back(
 					(old_F2->get_component(i)));

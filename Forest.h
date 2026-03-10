@@ -76,7 +76,7 @@ class Forest {
 	}
 	Forest(const Forest &f) {
 		components = vector<Node *>(f.components.size());
-		for(int i = 0; i < f.components.size(); i++) {
+		for(size_t i = 0; i < f.components.size(); i++) {
 			//if (f.components[i] != NULL)
 			components[i] = new Node(*f.components[i]);
 		}
@@ -89,7 +89,7 @@ class Forest {
 
 	Forest(Forest *f) {
 		components = vector<Node *>(f->components.size());
-		for(int i = 0; i < f->components.size(); i++) {
+		for(size_t i = 0; i < f->components.size(); i++) {
 			//if (f->components[i] != NULL)
 			components[i] = new Node(*f->components[i]);
 		}
@@ -102,7 +102,7 @@ class Forest {
         /* Temporary until rSPR_branch_and_bound_mult_hlpr uses the UndoMachine */
         Forest(Forest *f, map<Node*, Node*> *node_map) {
 		components = vector<Node *>(f->components.size());
-		for(int i = 0; i < f->components.size(); i++) {
+		for(size_t i = 0; i < f->components.size(); i++) {
 			//if (f->components[i] != NULL)
 		        Node* new_node = new Node(*f->components[i], node_map);
 		        components[i] = new_node;
@@ -119,7 +119,7 @@ class Forest {
   
 	Forest(Forest *f, bool b) {
 		components = vector<Node *>(f->components.size());
-		for(int i = 0; i < f->components.size(); i++) {
+		for(size_t i = 0; i < f->components.size(); i++) {
 			//if (f->components[i] != NULL)
 			components[i] = new Node(*f->components[i]);
 		}
@@ -135,7 +135,7 @@ class Forest {
 		this->components = vector<Node *>(components);
 		deleted_nodes = vector<Node *>();
 		rho = false;
-		for(int i = 0; i < components.size(); i++) {
+		for(size_t i = 0; i < components.size(); i++) {
 				if (components[i]->str() == "p")
 					rho = true;
 		}
@@ -143,13 +143,13 @@ class Forest {
 		cluster = NULL;
 	}
 	~Forest() {
-		for(int i = 0; i < components.size(); i++) {
+		for(size_t i = 0; i < components.size(); i++) {
 			//if (components[i] != NULL) {
 				components[i]->delete_tree();
 				components[i] = NULL;
 			//}
 		}
-		for(int i = 0; i < deleted_nodes.size(); i++) {
+		for(size_t i = 0; i < deleted_nodes.size(); i++) {
 			//if (deleted_nodes[i] != NULL) {
 				deleted_nodes[i]->delete_tree();
 				deleted_nodes[i] = NULL;
@@ -471,7 +471,7 @@ bool sync_twins(Forest *T1, Forest *T2) {
 				int number = stomini(leaf->str());
 //				cout << "\t" << number << endl;
 				if (number < INT_MAX) {
-					if (number >= T1_labels.size())
+					if (number >= (int)T1_labels.size())
 						T1_labels.resize(number+1, 0);
 					T1_labels[number] = leaf;
 				}
@@ -493,7 +493,7 @@ bool sync_twins(Forest *T1, Forest *T2) {
 				int number = stomini(leaf->str());
 //				cout << "\t" << number << endl;
 				if (number < INT_MAX) {
-					if (number >= T2_labels.size())
+					if (number >= (int)T2_labels.size())
 						T2_labels.resize(number+1, 0);
 					T2_labels[number] = leaf;
 				}
@@ -506,7 +506,7 @@ bool sync_twins(Forest *T1, Forest *T2) {
 	T2_labels[T2_labels.size()-1]=T2_rho;
 
 	int size = T1_labels.size();
-	if (size > T2_labels.size())
+	if (size > (int)T2_labels.size())
 		size = T2_labels.size();
 //	cout << "Syncing Twins" << endl;
 	for(int i = 0; i < size; i++) {
@@ -559,7 +559,7 @@ bool sync_twins(Forest *T1, Forest *T2) {
 //			cout << T1_a->str() << endl;
 		}
 	}
-	for(int i = size; i < T1_labels.size(); i++) {
+	for(int i = size; i < (int)T1_labels.size(); i++) {
 		Node *T1_a = T1_labels[i];
 		if (T1_a != NULL) {
 			Node *node = T1_a->parent();
@@ -583,7 +583,7 @@ bool sync_twins(Forest *T1, Forest *T2) {
 			
 		}
 	}
-	for(int i = size; i < T2_labels.size(); i++) {
+	for(int i = size; i < (int)T2_labels.size(); i++) {
 		Node *T2_a = T2_labels[i];
 		if (T2_a != NULL) {
 			Node *node = T2_a->parent();
@@ -647,7 +647,6 @@ void sync_interior_twins(Forest *T1, Forest *T2) {
 void sync_interior_twins_real(Forest *T1, Forest *F2) {
 	Node  *T1_root = T1->get_component(0);
 	LCA T1_LCA = LCA(T1_root);
-	int T1_size = T1_root->size_using_prenum();
 	// roots of F2
 	vector<Node *> F2_roots = vector<Node *>();
 	// LCA queries for F2
@@ -774,8 +773,6 @@ void sync_interior_twins(Node *n, vector<LCA> *F2_LCAs) {
 	// two children so put their info together
 	else if (lc != NULL && rc != NULL) {
 //		cout << "two children" << endl;
-		list<Node *> *lc_active_descendants = lc->get_active_descendants();
-		list<Node *> *rc_active_descendants = rc->get_active_descendants();
 
 /*	#ifdef DEBUG_SYNC
 	cout << "active_descendants lc" << endl;
@@ -817,7 +814,7 @@ void sync_interior_twins(Node *n, vector<LCA> *F2_LCAs) {
 		#ifdef DEBUG_SYNC
 		cout << active_descendants->size() << endl;
 		#endif
-		for(int i = 0; i < node_location.size(); i++) {
+		for(size_t i = 0; i < node_location.size(); i++) {
 			list<Node *>::iterator node1_location = node_location[i];
 			list<Node *>::iterator node2_location = node1_location;
 			node2_location++;
@@ -1101,7 +1098,7 @@ void find_cluster_points(Node *n, list<Node *> *cluster_points,
 						(*c)->get_depth() <= (*c)->get_twin()->get_twin()->get_depth())
 				num_clustered_children++;
 			}
-			if (num_clustered_children == n->get_children().size())
+			if (num_clustered_children == (int)n->get_children().size())
 				is_cluster = false;
 #ifdef RSPR
 		}
@@ -1149,7 +1146,7 @@ void find_cluster_points(Node *n, list<Node *> *cluster_points,
 				n->set_twin(new_child);
 				new_child->set_twin(n);
 				cluster_points->push_back(n);
-				for(int i = 0; i < chosen.size(); i++) {
+				for(size_t i = 0; i < chosen.size(); i++) {
 					new_child->add_child(chosen[i]);
 				}
 			}
@@ -1173,7 +1170,6 @@ void expand_contracted_nodes(Forest *F) {
 
 Forest *build_finished_forest(string &name) {
 	Forest *new_forest = new Forest();
-	string::iterator i = name.begin();
 		size_t old_loc = 0;
 		size_t loc = 0;
 		while ((loc = name.find(" ", old_loc)) != string::npos) {
@@ -1193,7 +1189,6 @@ Forest *build_finished_forest(string &name) {
 }
 Forest *build_forest(string &name) {
 	Forest *new_forest = new Forest();
-	string::iterator i = name.begin();
 		size_t old_loc = 0;
 		size_t loc = 0;
 		while ((loc = name.find(" ", old_loc)) != string::npos) {

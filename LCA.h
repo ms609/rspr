@@ -82,7 +82,7 @@ class LCA {
 		int preorder_number = N.size();
 		int euler_number = E.size();
 		N.push_back(node);
-		if (T.size() <= node->get_preorder_number())
+		if ((int)T.size() <= node->get_preorder_number())
 			T.resize(node->get_preorder_number()+1,-1);
 		T[node->get_preorder_number()] = preorder_number;
 
@@ -108,9 +108,9 @@ class LCA {
 	void precompute_rmq() {
 		// E gives queries of length 1
 		RMQ.push_back(E);
-		for(int length = 1; length < E.size(); length *= 2) {
+		for(int length = 1; length < (int)E.size(); length *= 2) {
 			vector<int> V = vector<int>();
-			for(int start = 0; start < E.size() - length; start++) {
+			for(int start = 0; start < (int)E.size() - length; start++) {
 				V.push_back(rmq(start, start + length));
 			}
 			RMQ.push_back(V);
@@ -159,24 +159,24 @@ class LCA {
 	}
 	*/
 	void debug() {
-		for(int i = 0; i < E.size(); i++) {
+		for(size_t i = 0; i < E.size(); i++) {
 			cout << " " << E[i];
 		}
 		cout << endl;
 		cout << endl;
-		for(int i = 0; i < L.size(); i++) {
+		for(size_t i = 0; i < L.size(); i++) {
 			cout << " " << L[i];
 		}
 		cout << endl;
 		cout << endl;
-		for(int i = 0; i < H.size(); i++) {
+		for(size_t i = 0; i < H.size(); i++) {
 			cout << " " << H[i];
 		}
 		cout << endl;
 		cout << endl;
 		cout << endl;
-		for(int i = 0; i < RMQ.size(); i++) {
-			for(int j = 0; j < RMQ[i].size(); j++) {
+		for(size_t i = 0; i < RMQ.size(); i++) {
+			for(size_t j = 0; j < RMQ[i].size(); j++) {
 			cout << " " << RMQ[i][j];
 			}
 			cout << endl;
