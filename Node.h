@@ -913,10 +913,18 @@ class Node {
 						new_child->cut_parent();
 						add_child(new_child);
 					}
-					if (child->contracted_lc != NULL)
+					if (child->contracted_lc != NULL) {
+						if (contracted_lc != NULL)
+							contracted_lc->delete_tree();
 						contracted_lc = child->contracted_lc;
-					if (child->contracted_rc != NULL)
+						contracted_lc->p = this;
+					}
+					if (child->contracted_rc != NULL) {
+						if (contracted_rc != NULL)
+							contracted_rc->delete_tree();
 						contracted_rc = child->contracted_rc;
+						contracted_rc->p = this;
+					}
 					pre_num = child->get_preorder_number();
 
 					c = child->contracted_children.begin();
