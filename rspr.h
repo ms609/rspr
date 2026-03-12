@@ -5250,6 +5250,9 @@ int rSPR_branch_and_bound_simple_clustering(Node *T1, Node *T2, bool verbose, ma
 	
 			// TODO: approx again? seperate approxes ?
 		}
+		// f1, f2 don't own their components (borrowed from F1, F2)
+		f1.erase_components();
+		f2.erase_components();
 	}
 
 		if (F1.contains_rho()) {
