@@ -936,9 +936,9 @@ class Node {
 						contracted = true;
 					}
 					child->contracted_children.clear();
+					child->contracted_lc = NULL;
+					child->contracted_rc = NULL;
 					if (remove) {
-						child->contracted_lc = NULL;
-						child->contracted_rc = NULL;
 						delete child;
 					}
 					ret = this;
@@ -989,6 +989,12 @@ class Node {
 			*/
 			Node *lc = lchild();
 			Node *rc = rchild();
+#ifdef COPY_CONTRACTED
+			if (contracted_lc != NULL)
+				contracted_lc->delete_tree();
+			if (contracted_rc != NULL)
+				contracted_rc->delete_tree();
+#endif
 			contracted_lc = lc;
 			contracted_rc = rc;
 			rc->cut_parent();
