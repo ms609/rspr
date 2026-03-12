@@ -989,12 +989,6 @@ class Node {
 			*/
 			Node *lc = lchild();
 			Node *rc = rchild();
-#ifdef COPY_CONTRACTED
-			if (contracted_lc != NULL)
-				contracted_lc->delete_tree();
-			if (contracted_rc != NULL)
-				contracted_rc->delete_tree();
-#endif
 			contracted_lc = lc;
 			contracted_rc = rc;
 			rc->cut_parent();
