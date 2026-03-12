@@ -266,6 +266,8 @@ class ContractSiblingPair : public Undoable {
 		int c2_depth;
 		bool binary_node;
 		bool node_protected;
+		Node *old_contracted_lc;
+		Node *old_contracted_rc;
 		ContractSiblingPair(Node *n) {
 			init(n);
 			if (n->is_protected())
@@ -275,6 +277,8 @@ class ContractSiblingPair : public Undoable {
 		}
 		ContractSiblingPair(Node *n, Node *child1, Node *child2,
 				UndoMachine *um) {
+			old_contracted_lc = NULL;
+			old_contracted_rc = NULL;
 			if (n->get_children().size() == 2)
 				init(n);
 			else {
@@ -289,8 +293,17 @@ class ContractSiblingPair : public Undoable {
 				node_protected = false;
 		}
 
+		~ContractSiblingPair() {
+			if (old_contracted_lc != NULL)
+				old_contracted_lc->delete_tree();
+			if (old_contracted_rc != NULL)
+				old_contracted_rc->delete_tree();
+		}
+
 		void init(Node *n) {
 			node = n;
+			old_contracted_lc = n->get_contracted_lc();
+			old_contracted_rc = n->get_contracted_rc();
 			if (n->lchild() != NULL)
 				c1_depth = n->lchild()->get_depth();
 			else
@@ -305,6 +318,10 @@ class ContractSiblingPair : public Undoable {
 		void undo() {
 			if (binary_node) {
 				node->undo_contract_sibling_pair();
+				node->set_contracted_lc(old_contracted_lc);
+				node->set_contracted_rc(old_contracted_rc);
+				old_contracted_lc = NULL;
+				old_contracted_rc = NULL;
 				if (c1_depth > -1)
 					node->lchild()->set_depth(c1_depth);
 				if (c2_depth > -1)

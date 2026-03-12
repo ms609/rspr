@@ -936,9 +936,9 @@ class Node {
 						contracted = true;
 					}
 					child->contracted_children.clear();
-					child->contracted_lc = NULL;
-					child->contracted_rc = NULL;
 					if (remove) {
+						child->contracted_lc = NULL;
+						child->contracted_rc = NULL;
 						delete child;
 					}
 					ret = this;
