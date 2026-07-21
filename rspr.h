@@ -1052,6 +1052,7 @@ int rSPR_branch_and_bound_mult_hlpr(Forest *T1, Forest *T2,
   if (k < 0) {
     return k;
   }
+  Rcpp::checkUserInterrupt();
   Node* previous_group = sibling_groups->back();
   int best_k = -1;
   while(!singletons->empty() || !sibling_groups->empty()) {
@@ -3482,6 +3483,7 @@ int end_k) {
 	MAIN_CALL = false;
 	int k;
 	for(k = start_k; k <= end_k; k++) {
+Rcpp::checkUserInterrupt();
 if (in_main) {
 	cout << " " << k;
 	cout.flush();
@@ -3642,6 +3644,8 @@ cout << "  ";
 	}
 	cout << endl;
 	#endif
+
+	Rcpp::checkUserInterrupt();
 
 	UndoMachine um = UndoMachine();
 
