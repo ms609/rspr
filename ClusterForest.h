@@ -164,7 +164,8 @@ class ClusterForest: public Forest {
 // Functions
 
 // swap two cluster forests
-void swap(ClusterForest **a, ClusterForest **b) {
+// (named `swap_cluster_forest_pointers`, not `swap`: see Node.h)
+void swap_cluster_forest_pointers(ClusterForest **a, ClusterForest **b) {
 	(*a)->swap(*b);
 }
 #endif

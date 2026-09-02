@@ -1157,7 +1157,8 @@ void find_cluster_points(Node *n, list<Node *> *cluster_points,
 }
 
 // swap two forests
-void swap(Forest **a, Forest **b) {
+// (named `swap_forest_pointers`, not `swap`: see swap_node_pointers in Node.h)
+void swap_forest_pointers(Forest **a, Forest **b) {
 	(*a)->swap(*b);
 }
 

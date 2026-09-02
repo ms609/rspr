@@ -2317,18 +2317,34 @@ if(!sibling_pairs->empty()) {
 		
 		//  ensure T2_a is below T2_c
 		if (T2_a->get_depth() < T2_c->get_depth()) {
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 		}
 		else if (T2_a->get_depth() == T2_c->get_depth()) {
 			if (T2_a->parent() && T2_c->parent() &&
 					(T2_a->parent()->get_depth() <
 					T2_c->parent()->get_depth())) {
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 			}
 		}
 
+		// Both twins are already singleton components of T2, so this is a
+		// Case 1 situation that was never queued: the branch-and-bound
+		// maintains `singletons` itself and can leave T2 singletons off the
+		// list.  The swap above cannot help when neither node has a parent,
+		// and everything below dereferences T2_a->parent(), so hand the
+		// singletons back to Case 1 (which cuts the corresponding edges in
+		// T1 at no cost) instead of falling through and reading NULL.
+		if (T2_a->parent() == NULL && T2_c->parent() == NULL) {
+			if (T2_a != T2->get_component(0)) {
+				singletons->push_back(T2_a);
+			}
+			if (T2_c != T2->get_component(0)) {
+				singletons->push_back(T2_c);
+			}
+			continue;
+		}
 		// get T2_b
 		Node *T2_ab = T2_a->parent();
 		Node *T2_b = T2_ab->rchild();
@@ -2732,19 +2748,35 @@ if(!sibling_pairs->empty()) {
 				cout << "swapping" << endl;
 			#endif
 		
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 
 		}
 		else if (T2_a->get_depth() == T2_c->get_depth()) {
 			if (T2_a->parent() && T2_c->parent() &&
 					(T2_a->parent()->get_depth() <
 					T2_c->parent()->get_depth())) {
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 			}
 		}
 
+		// Both twins are already singleton components of T2, so this is a
+		// Case 1 situation that was never queued: the branch-and-bound
+		// maintains `singletons` itself and can leave T2 singletons off the
+		// list.  The swap above cannot help when neither node has a parent,
+		// and everything below dereferences T2_a->parent(), so hand the
+		// singletons back to Case 1 (which cuts the corresponding edges in
+		// T1 at no cost) instead of falling through and reading NULL.
+		if (T2_a->parent() == NULL && T2_c->parent() == NULL) {
+			if (T2_a != T2->get_component(0)) {
+				singletons->push_back(T2_a);
+			}
+			if (T2_c != T2->get_component(0)) {
+				singletons->push_back(T2_c);
+			}
+			continue;
+		}
 		// get T2_b
 		bool multi_node = false;
 		Node *T2_ab = T2_a->parent();
@@ -3245,19 +3277,35 @@ if(!sibling_pairs->empty()) {
 				cout << "swapping" << endl;
 			#endif
 		
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 
 		}
 		else if (T2_a->get_depth() == T2_c->get_depth()) {
 			if (T2_a->parent() && T2_c->parent() &&
 					(T2_a->parent()->get_depth() <
 					T2_c->parent()->get_depth())) {
-			swap(&T1_a, &T1_c);
-			swap(&T2_a, &T2_c);
+			swap_node_pointers(&T1_a, &T1_c);
+			swap_node_pointers(&T2_a, &T2_c);
 			}
 		}
 
+		// Both twins are already singleton components of T2, so this is a
+		// Case 1 situation that was never queued: the branch-and-bound
+		// maintains `singletons` itself and can leave T2 singletons off the
+		// list.  The swap above cannot help when neither node has a parent,
+		// and everything below dereferences T2_a->parent(), so hand the
+		// singletons back to Case 1 (which cuts the corresponding edges in
+		// T1 at no cost) instead of falling through and reading NULL.
+		if (T2_a->parent() == NULL && T2_c->parent() == NULL) {
+			if (T2_a != T2->get_component(0)) {
+				singletons->push_back(T2_a);
+			}
+			if (T2_c != T2->get_component(0)) {
+				singletons->push_back(T2_c);
+			}
+			continue;
+		}
 		// get T2_b
 		Node *T2_ab = T2_a->parent();
 		Node *T2_b = T2_ab->rchild();
@@ -3955,8 +4003,8 @@ cout << "  ";
 				if ((T2_a->get_depth() < T2_c->get_depth()
 						&& T2_c->parent() != NULL)
 						|| T2_a->parent() == NULL) {
-					swap(&T1_a, &T1_c);
-					swap(&T2_a, &T2_c);
+					swap_node_pointers(&T1_a, &T1_c);
+					swap_node_pointers(&T2_a, &T2_c);
 				}
 				else if (T2_a->get_depth() == T2_c->get_depth()) {
 					if (T2_a->parent() && T2_c->parent() &&
@@ -3965,9 +4013,20 @@ cout << "  ";
 							//|| (T2_c->parent()->parent()
 							//&& T2_c->parent()->parent() == T2_a->parent())
 							)) {
-					swap(&T1_a, &T1_c);
-					swap(&T2_a, &T2_c);
+					swap_node_pointers(&T1_a, &T1_c);
+					swap_node_pointers(&T2_a, &T2_c);
 					}
+				}
+				// The "singleton list is empty" note above does not hold: a
+				// sibling pair can survive in the queue after both its twins
+				// have been cut down to singleton components of T2, and such
+				// singletons are not always queued.  The swap above cannot help
+				// when neither node has a parent, and everything below
+				// dereferences T2_a->parent(), so hand them back to Case 1.
+				if (T2_a->parent() == NULL && T2_c->parent() == NULL) {
+					singletons->push_back(T2_a);
+					singletons->push_back(T2_c);
+					continue;
 				}
 				Node *T2_b = T2_a->parent()->rchild();
 				if (T2_b == T2_a)
@@ -4651,8 +4710,8 @@ cout << "  ";
 							&& PREFER_RHO
 							&& T2->contains_rho() )) {
 					best_k = answer_b;
-					//swap(&best_T1, &T1);
-					//swap(&best_T2, &T2);
+					//swap_node_pointers(&best_T1, &T1);
+					//swap_node_pointers(&best_T2, &T2);
 				}
 
 				um.undo_to(undo_state);
@@ -4762,8 +4821,8 @@ cout << "  ";
 									&& PREFER_RHO
 									&& T2->contains_rho() )) {
 							best_k = answer_c;
-							//swap(&best_T1, &T1);
-							//swap(&best_T2, &T2);
+							//swap_node_pointers(&best_T1, &T1);
+							//swap_node_pointers(&best_T2, &T2);
 						}
 				}
 				/*
@@ -6897,8 +6956,8 @@ bool is_nonbranching(Forest *T1, Forest *T2, Node *T1_a, Node *T1_c, Node *T2_a,
 	if ((T2_a->get_depth() < T2_c->get_depth()
 			&& T2_c->parent() != NULL)
 			|| T2_a->parent() == NULL) {
-		swap(&T1_a, &T1_c);
-		swap(&T2_a, &T2_c);
+		swap_node_pointers(&T1_a, &T1_c);
+		swap_node_pointers(&T2_a, &T2_c);
 	}
 	else if (T2_a->get_depth() == T2_c->get_depth()) {
 		if (T2_a->parent() && T2_c->parent() &&
@@ -6907,9 +6966,17 @@ bool is_nonbranching(Forest *T1, Forest *T2, Node *T1_a, Node *T1_c, Node *T2_a,
 				//|| (T2_c->parent()->parent()
 				//&& T2_c->parent()->parent() == T2_a->parent())
 				)) {
-		swap(&T1_a, &T1_c);
-		swap(&T2_a, &T2_c);
+		swap_node_pointers(&T1_a, &T1_c);
+		swap_node_pointers(&T2_a, &T2_c);
 		}
+	}
+	// Everything below assumes T2_a has a parent.  The swap above arranges
+	// that whenever T2_c has one, but if neither T2_a nor T2_c has a parent
+	// (both are component roots) no swap can help: there is no structure
+	// above the pair to reason about, so this is not a nonbranching case.
+	// Without this guard `T2_a->parent()->...` dereferences NULL.
+	if (T2_a->parent() == NULL) {
+		return false;
 	}
 	int num_protected = T2_a->is_protected() + T2_c->is_protected();
 	if (T2_a->parent()->get_children().size() == 2)
