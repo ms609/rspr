@@ -2892,7 +2892,6 @@ string::size_type build_tree_helper(string::size_type start, const string& s, No
 }
 
 // swap two nodes
-void swap(Node **a, Node **b) {
 void swap_node_pointers(Node **a, Node **b) {
 	Node *temp = *a;
 	*a = *b;
